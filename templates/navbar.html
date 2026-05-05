@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Navbar</title>
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Navbar Styles */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 3rem 9.5rem;
+      /* Adjusted padding */
+      background-color: transparent;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+    }
+
+    .logo {
+      width: 10rem;
+      height: auto;
+      margin-left: 15px;
+    }
+
+
+    .nav-center {
+      display: flex;
+      gap: 4rem;
+      /* gap betwwen buttons */
+    }
+
+    .nav-center a {
+      text-decoration: none;
+      color: #FCEEFF;
+      font-weight: 400;
+      font-size: 1rem;
+      font-family: 'Raleway', sans-serif;
+      padding: 0.5rem 0;
+      position: relative;
+      transition: color 0.3s ease;
+    }
+
+    .nav-center a:hover {
+      color: #7565FF;
+    }
+
+    .nav-center a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: #7565FF;
+      transition: width 0.3s ease;
+    }
+
+    .nav-center a:hover::after {
+      width: 100%;
+    }
+
+    .nav-button {
+      padding: 0.625rem 1.25rem;
+      background-color: #7565FF;
+      color: #FCEEFF;
+      border: none;
+      border-radius: 30rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Raleway', sans-serif;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .nav-button:hover {
+      background-color: #7565FF;
+      transform: translateY(-3px) scale(1.08);
+      /* Slight lift and scale */
+      box-shadow: 0 5px 10px rgba(117, 101, 255, 0.4);
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar"
+    style="position:sticky; top:0; left:0; width:100%; z-index:1000; background:transparent; backdrop-filter:none;">
+    <div class="nav-left">
+
+      <img src="{{ url_for('static', filename='arogyabot_logo.svg') }}" alt="ArogyaBot Logo" class="logo" />
+    </div>
+
+    {% if current_user.is_authenticated and current_user.is_admin %}
+    <div class="nav-center">
+      <a href="{{ url_for('doctor') }}" class="nav-link">Patient Dashboard</a>
+      <a href="{{ url_for('doctor_appointments') }}" class="nav-link">Appointment Requests</a>
+    </div>
+    {% else %}
+    <div class="nav-center">
+      <a href="{{ url_for('home') }}">Home</a>
+      <a href="{{ url_for('upload') }}">Diagnose</a>
+      <a href="{{ url_for('history') }}">History</a>
+      <a href="{{ url_for('about') }}">About</a>
+      <a href="{{ url_for('my_appointments') }}">Appointments</a>
+    </div>
+    {% endif %}
+
+    <div class="nav-right">
+      {% if current_user.is_authenticated and not current_user.is_admin %}
+      <!-- Normal user only -->
+      <button class="nav-button" onclick="window.location.href='{{ url_for('profile') }}'">
+        Profile
+      </button>
+
+      {% elif not current_user.is_authenticated %}
+      <!-- Guest -->
+      <button class="nav-button" onclick="window.location.href='{{ url_for('login') }}'">
+        Login
+      </button>
+      {% endif %}
+    </div>
+
+  </nav>
+</body>
+
+</html>

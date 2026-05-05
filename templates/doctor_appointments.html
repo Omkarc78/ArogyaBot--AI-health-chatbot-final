@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Doctor Appointments</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body {
+      background: #1f2033;
+      color: #fff;
+    }
+    .table {
+      --bs-table-bg: #2b2d45;
+      --bs-table-border-color: #4A6FA5; /* Using a color from doctor.html theme */
+      --bs-table-color: #fff;
+      --bs-table-hover-bg: #3c3e5e;
+    }
+    .table-dark {
+      --bs-table-bg: #4A6FA5;
+      --bs-table-color: #fff;
+      --bs-table-border-color: #4A6FA5;
+    }
+    .btn-success {
+        background-color: #2E7D32;
+        border-color: #2E7D32;
+    }
+    .btn-danger {
+        background-color: #C62828;
+        border-color: #C62828;
+    }
+    .btn-outline-light {
+        --bs-btn-color: #f8f9fa;
+        --bs-btn-border-color: #f8f9fa;
+        --bs-btn-hover-color: #000;
+        --bs-btn-hover-bg: #f8f9fa;
+        --bs-btn-hover-border-color: #f8f9fa;
+    }
+  </style>
+</head>
+<body style="background:#1f2033; color:#fff;">
+
+{% include 'navbar.html' %}
+
+<div class="container mt-5 pt-4">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3><i class="bi bi-calendar-check-fill"></i> Appointment Requests</h3>
+    <a href="{{ url_for('doctor') }}" class="btn btn-outline-light">
+      <i class="bi bi-person-circle"></i> Back to Doctor Panel
+    </a>
+  </div>
+
+  {% if visits %}
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead class="table-dark">
+          <tr>
+            <th>Patient</th>
+            <th>Disease / Reason</th>
+            <th>Requested Date & Time</th>
+            <th>Status</th>
+            <th style="width: 20%;">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for v in visits %}
+          <tr>
+            <td>
+              <b>{{ v.user.full_name if v.user else 'N/A' }}</b><br>
+              <small class="text-white-50">ID: {{ v.user_id }}</small>
+            </td>
+            <td>{{ v.disease }}</td>
+            <td>{{ v.appointment_datetime.strftime('%d %b %Y, %I:%M %p') if v.appointment_datetime else 'N/A' }}</td>
+            <td>
+              {% if v.status == 'pending' %}
+                <span class="badge bg-warning text-dark">Pending</span>
+              {% elif v.status == 'confirmed' %}
+                <span class="badge bg-success">Confirmed</span>
+              {% elif v.status == 'rejected' %}
+                <span class="badge bg-danger">Rejected</span>
+              {% else %}
+                <span class="badge bg-secondary">{{ v.status }}</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if v.status == 'pending' %}
+                <div class="d-flex gap-2">
+                  <form method="POST" action="{{ url_for('confirm_appointment', id=v.id) }}" class="mb-0">
+                    <button type="submit" class="btn btn-sm btn-success">Confirm</button>
+                  </form>
+                  <form method="POST" action="{{ url_for('reject_appointment', id=v.id) }}" class="mb-0">
+                    <button type="submit" class="btn btn-sm btn-danger">Reject</button>
+                  </form>
+                </div>
+              {% elif v.status == 'confirmed' %}
+                <form method="POST" action="{{ url_for('reject_appointment', id=v.id) }}" class="mb-0">
+                  <button type="submit" class="btn btn-sm btn-warning text-dark">Cancel</button>
+                </form>
+              {% else %}
+                <span class="text-white-50">—</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="alert alert-info text-center" style="background:#2b2d45; border:none; color:#fff;">
+      You have no appointment requests.
+    </div>
+  {% endif %}
+</div>
+
+{% include 'footer.html' %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

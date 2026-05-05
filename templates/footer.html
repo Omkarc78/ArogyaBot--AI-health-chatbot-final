@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ArogyaBot</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;700&display=swap">
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    #main-content {
+      flex: 1 0 auto;
+    }
+    footer {
+      flex-shrink: 0;
+    }
+    footer {
+      width: 100%;
+      background: rgba(41,49,62,0.18);
+      backdrop-filter: blur(12px);
+      border-top: 1.5px solid rgba(255,255,255,0.13);
+      color: #FCEEFF;
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.88rem;
+      letter-spacing: 0.01em;
+      box-shadow: 0 2px 24px 0 rgba(0,0,0,0.10);
+      margin-top: 4rem;
+      padding: 0;
+    }
+    footer div {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.1rem 1.2rem 0.8rem 1.2rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.2rem;
+    }
+    footer img {
+      height: 26px;
+      width: auto;
+      border-radius: 6px;
+      background: transparent;
+    }
+    footer span {
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: 0.03em;
+      color: #f2e3a0;
+    }
+    footer nav {
+      display: flex;
+      gap: 1.8rem;
+      align-items: center;
+      font-size:0.92em;
+    }
+    footer a {
+      color: #FCEEFF;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    footer div:last-child {
+      font-size: 0.82rem;
+      color: #bdb6d6;
+      text-align: right;
+      margin-top:0.2rem;
+    }
+  </style>
+</head>
+<body>
+  <div id="main-content">
+    <!-- Main content of the page -->
+  </div>
+  <footer>
+    <div>
+      <div style="display: flex; align-items: center; gap: 0.7rem;">
+        <img src="{{ url_for('static', filename='arogyabot_logo.svg') }}" alt="ArogyaBot Logo">
+        <span>
+          ArogyaBot
+        </span>
+      </div>
+      <div style="flex:1;"></div>
+      <div style="flex:2; display: flex; justify-content: center; align-items: center;">
+        <nav>
+          <a href="{{ url_for('home') }}">Home</a>
+          <a href="{{ url_for('upload') }}">Diagnose</a>
+          <a href="{{ url_for('profile') }}">Profile</a>
+          <a href="mailto:support@arogyabot.com">
+            Contact
+          </a>
+        </nav>
+      </div>
+      <div style="flex:1;"></div>
+      <div>
+        &copy; 2026 ArogyaBot. All rights reserved.
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

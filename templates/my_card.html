@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ArogyaBot Health ID</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+  <style>
+    :root {
+      --primary: #6c5ce7;
+      --secondary: #a29bfe;
+      --dark: #2d3436;
+      --light: #f5f6fa;
+      --accent: #fd79a8;
+      --medical: #00cec9;
+      --emergency: #e17055;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    body {
+      background-color: #f8f9fa;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+      font-size: 12px;
+    }
+    
+    /* Card Styles */
+    .health-card {
+      width: 100%;
+      max-width: 420px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      margin-bottom: 18px;
+    }
+    
+    /* Header Styles */
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 70px;
+      background: transparent;
+      padding: 12px;
+      margin-bottom: -15px;
+      margin-top: 5px;
+    }
+    
+    .logo-img {
+      height: 18px;
+    }
+    
+    .header-text {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--primary);
+      letter-spacing: 0.01em;
+    }
+    
+    /* Profile Section */
+    .profile-section {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 100px;
+      background: transparent;
+      margin-bottom: -25px;
+    }
+    
+    .profile-container, .qrcode-container {
+      background: transparent;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .profile-img {
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      /* Default: white background and border for no photo */
+      background: white;
+      border: 3px solid white;
+      object-fit: cover;
+      margin-bottom: 10px;
+      /* Add a strong drop shadow below the profile photo */
+      box-shadow: 0 8px 24px 0 rgba(44, 62, 80, 0.22), 0 2px 8px 0 rgba(44, 62, 80, 0.10);
+    }
+    /* If profile photo is set, make background, border, and shadow invisible */
+    .profile-img.has-photo {
+      background: transparent !important;
+      border-width: 0 !important;
+      border-color: transparent !important;
+      box-shadow: none !important;
+    }
+    
+    .patient-name {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 2px;
+      text-align: center;
+    }
+    
+    .patient-id {
+      font-size: 0.8rem;
+      color: var(--dark);
+      position: relative;
+      left: -21px;
+    }
+    
+    /* Info Grid */
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      padding: 14px;
+    }
+    
+    .info-section {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 10px;
+      min-height: 140px;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.78rem;
+      margin-bottom: 7px;
+      font-weight: 600;
+    }
+    
+    .info-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+    
+    .info-label {
+      min-width: 70px;
+      font-size: 0.65rem;
+      color: #7f8c8d;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .info-value {
+      font-size: 0.78rem;
+      color: var(--dark);
+      font-weight: 500;
+      margin-left: 8px;
+    }
+    
+    /* Theme Variations */
+    .medical .section-title { color: var(--medical); }
+    .emergency .section-title { color: var(--emergency); }
+    
+    /* QR Code */
+    #qrcode {
+      background: white;
+      padding: 4px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      width: 90px;
+      height: 90px;
+      margin-left: -50px;
+    }
+    
+    /* Download Button */
+    .download-section {
+      text-align: center;
+      margin-top: 18px;
+      width: 100%;
+      max-width: 420px;
+    }
+    
+    .download-btn {
+      border-radius: 14px;
+      font-weight: 500;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 6px 18px;
+      font-size: 0.98rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    
+    .download-btn:hover {
+      background: var(--secondary);
+    }
+    
+    @media (max-width: 768px) {
+      .health-card { max-width: 98vw; }
+      .info-grid { grid-template-columns: 1fr; }
+      .card-header { gap: 40px; }
+      .profile-section { gap: 60px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="card" class="health-card">
+    <!-- Header -->
+    <div class="card-header">
+      <img src="{{ url_for('static', filename='arogyabot_logo.svg') }}" alt="ArogyaBot Logo" class="logo-img">
+      <span class="header-text">Your Personal Health Card</span>
+    </div>
+    
+    <!-- Profile Section -->
+    <div class="profile-section">
+      <div class="profile-container" style="transform: scale(0.82); margin-top: -10px;">
+        <img src="{{ user.profile_photo or 'static/profile.jpg' }}"
+             alt="Patient Photo"
+             class="profile-img{% if user.profile_photo and user.profile_photo != '' and user.profile_photo != None %} has-photo{% endif %}"
+             style="display:block; margin:0 auto 0 auto; box-shadow: 0 10px 30px rgba(0,0,0,0.13);">
+      </div>
+      <div class="qrcode-container">
+        <div id="qrcode"></div>
+        <div class="patient-id">ID: {{ user.id }}</div>
+      </div>
+    </div>
+    
+    <h2 class="patient-name">{{ user.name }}</h2>
+    
+    <!-- Info Grid -->
+    <div class="info-grid">
+      <!-- Personal Info -->
+      <div class="info-section">
+        <div class="section-title">
+          <span>👤</span>
+          <span>Personal Information</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Gender</span>
+          <span class="info-value">{{ user.profile.gender }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Age</span>
+          <span class="info-value">{{ user.profile.age }} years</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Height</span>
+          <span class="info-value">{{ user.profile.height }} cm</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Weight</span>
+          <span class="info-value">{{ user.profile.weight }} kg</span>
+        </div>
+      </div>
+      
+      <!-- Medical Info -->
+      <div class="info-section medical">
+        <div class="section-title">
+          <span>🩺</span>
+          <span>Medical Information</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Blood Group</span>
+          <span class="info-value">B+</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Conditions</span>
+          <span class="info-value">{{ user.profile.chronic_conditions or 'N/A' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Allergies</span>
+          <span class="info-value">{{ user.profile.allergies or 'N/A' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Medications</span>
+          <span class="info-value">{{ user.profile.current_medication or 'N/A' }}</span>
+        </div>
+      </div>
+      
+      <!-- Emergency Contact -->
+      <div class="info-section emergency">
+        <div class="section-title">
+          <span>🚨</span>
+          <span>Emergency Contact</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Name</span>
+          <span class="info-value">{{ user.emergency_contact_name or 'N/A' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Relationship</span>
+          <span class="info-value">{{ user.emergency_relationship or 'N/A' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Phone</span>
+          <span class="info-value">{{ user.emergency_contact_mobile or 'N/A' }}</span>
+        </div>
+      </div>
+      
+      <!-- Healthcare Provider -->
+      <div class="info-section">
+        <div class="section-title">
+          <span>🏥</span>
+          <span>Healthcare Provider</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Primary Physician</span>
+          <span class="info-value">{{ user.primary_physician or 'Dr. Priya Kulkarni' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Clinic</span>
+          <span class="info-value">{{ user.clinic or 'Ruby Hall Clinic, Pune' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Last Visit</span>
+          <span class="info-value">
+            {% set last_diag = user.diagnoses|sort(attribute='diagnosed_at', reverse=True)|first %}
+            {{ last_diag.diagnosed_at.strftime('%d %b %Y') if last_diag and last_diag.diagnosed_at else 'N/A' }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- End of card -->
+
+  <!-- Download Button Section -->
+  <div class="download-section">
+    <button id="download-card-btn" class="download-btn">
+      Download My Card
+    </button>
+  </div>
+
+  <!-- Add html2canvas CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script>
+    // Gather all card info as plain text for QR
+    const qrText = `
+Name: {{ user.name }}
+ID: {{ user.id }}
+DOB: {{ user.dob }}
+Gender: {{ user.profile.gender }} 
+Age: {{ user.profile.age }} years
+Height: {{ user.profile.height }} cm
+Weight: {{ user.profile.weight }} kg
+Blood Group: B+
+Conditions: {{ user.profile.chronic_conditions or 'N/A' }}
+Allergies: {{ user.profile.allergies or 'N/A' }}
+Medications: {{ user.profile.current_medication or 'N/A' }}
+Emergency Contact: {{ user.emergency_contact_name or 'N/A' }} ({{ user.emergency_relationship or 'N/A' }}) {{ user.emergency_contact_mobile or 'N/A' }}
+Primary Physician: {{ user.primary_physician or 'Dr. Priya Kulkarni' }}
+Clinic: {{ user.clinic or 'Ruby Hall Clinic, Pune' }}
+Last Visit: {% set last_diag = user.diagnoses|sort(attribute='diagnosed_at', reverse=True)|first %}{{ last_diag.diagnosed_at.strftime('%d %b %Y') if last_diag and last_diag.diagnosed_at else 'N/A' }}
+    `.trim();
+
+    new QRCode(document.getElementById("qrcode"), {
+      text: qrText,
+      width: 90,
+      height: 90,
+      colorDark: "#2d3436",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.H
+    });
+
+    document.getElementById('download-card-btn').addEventListener('click', function() {
+      const card = document.querySelector('.health-card');
+      // Hide the download button while capturing
+      this.style.visibility = 'hidden';
+      html2canvas(card, {backgroundColor: null}).then(function(canvas) {
+        const link = document.createElement('a');
+        link.download = 'my_health_card.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        // Restore button visibility
+        document.getElementById('download-card-btn').style.visibility = 'visible';
+      });
+    });
+  </script>
+</body>
+</html>

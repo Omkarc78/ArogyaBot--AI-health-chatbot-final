@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Book Appointment</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body {
+      background: #1f2033;
+      color: #fff;
+    }
+    .card {
+      background: #2b2d45;
+      border-radius: 15px;
+      border: 1px solid #6f64ff;
+    }
+    .form-control {
+      background-color: #1f2033;
+      color: #fff;
+      border-color: #6f64ff;
+    }
+    .form-control:focus {
+      background-color: #1f2033;
+      color: #fff;
+      border-color: #a29bfe;
+      box-shadow: 0 0 0 0.25rem rgba(117, 101, 255, 0.25);
+    }
+    .form-control::placeholder {
+      color: #ccc;
+    }
+    .card-img-top {
+      height: 200px;
+      object-fit: cover;
+      border-top-left-radius: 14px;
+      border-top-right-radius: 14px;
+    }
+    .btn-primary {
+      background: #6f64ff;
+      border: none;
+    }
+  </style>
+</head>
+
+<body style="background:#1f2033; color:#fff;">
+
+{% include 'navbar.html' %}
+
+<div class="container mt-5 pt-4">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <div class="row">
+    <!-- Doctor Card -->
+    <div class="col-md-4 mb-4">
+      <div class="card shadow-sm">
+        <img src="{{ url_for('static', filename=doctor.clinic_photo.split('static/')[-1] if doctor.clinic_photo else 'default_doctor.png') }}"
+             class="card-img-top" alt="Clinic Photo">
+        <div class="card-body">
+          <h5>{{ doctor.full_name }}</h5>
+          <p class="text-white-50">{{ doctor.specialty }}</p>
+          <p><i class="bi bi-hospital"></i> {{ doctor.clinic or 'N/A' }}</p>
+          <p class="small"><i class="bi bi-geo-alt"></i> {{ doctor.address or 'N/A' }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Booking Form -->
+    <div class="col-md-8">
+      <div class="card shadow-sm">
+        <div class="card-body p-4">
+          <h4 class="mb-3">Book Appointment</h4>
+
+          <form method="POST">
+            <div class="mb-3">
+              <label class="form-label">Disease / Reason for Visit</label>
+              <input type="text" name="disease" class="form-control"
+                     placeholder="e.g. Fever, Headache" required>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Preferred Date & Time</label>
+              <input type="datetime-local" name="appointment_datetime"
+                     class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Additional Notes</label>
+              <textarea name="notes" class="form-control"
+                        rows="3" placeholder="Describe symptoms or concerns... (Optional)"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-calendar-check"></i> Book Appointment
+            </button>
+          </form>
+
+          <small class="text-white-50 d-block mt-3">
+            Appointment will be <b>pending</b> until the doctor confirms.
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% include 'footer.html' %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

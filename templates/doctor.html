@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Doctor Profile</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #4A6FA5;
+      --secondary-color: #166088;
+      --accent-color: #4FC3F7;
+      --text-color: #E0E0E0;
+      --glass-bg: rgba(40, 48, 61, 0.7);
+      --section-bg: rgba(40, 48, 61, 0.5);
+      --border-color: rgba(255, 255, 255, 0.15);
+      --card-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    body {
+      background: url('static/background.png') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Raleway', sans-serif;
+      color: var(--text-color);
+      padding: 40px 15px;
+      min-height: 100vh;
+    }
+
+    .glass-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(18px);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: var(--card-shadow);
+      margin-bottom: 30px;
+      border: 1px solid var(--border-color);
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .top-bar .btn {
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .profile-section {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
+    }
+
+    .profile-photo {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: white;
+      border: 3px solid rgba(255, 255, 255, 0.25);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      position: relative;
+    }
+    .profile-photo.has-photo {
+      background: transparent !important;
+      border-width: 0 !important;
+      border-color: transparent !important;
+      box-shadow: none !important;
+    }
+
+    .profile-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .profile-details {
+      flex-grow: 1;
+    }
+
+    .profile-details h2 {
+      font-size: 1.8rem;
+      margin-bottom: 8px;
+      color: var(--accent-color);
+    }
+
+    .profile-details p {
+      margin: 2px 0;
+      font-size: 0.95rem;
+      opacity: 0.85;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .info-block {
+      background: var(--section-bg);
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+    }
+
+    .info-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-bottom: 4px;
+      color: var(--accent-color);
+    }
+
+    .info-value {
+      font-size: 0.9rem;
+      opacity: 0.85;
+    }
+
+    @media (max-width: 576px) {
+      .profile-section {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+    }
+    .profile-photo-form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    .profile-photo-form input[type="file"] {
+      display: none;
+    }
+    .profile-photo-form label {
+      background: var(--primary-color);
+      color: #fff;
+      border-radius: 8px;
+      padding: 0.4rem 1.1rem;
+      font-size: 0.98rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      margin-bottom: 0.2rem;
+      transition: background 0.2s;
+    }
+    .profile-photo-form label:hover {
+      background: var(--secondary-color);
+    }
+    .alert-success, .alert-danger {
+      margin-bottom: 1.5rem;
+      border-radius: 10px;
+    }
+    .profile-divider {
+      border-top: 1.5px solid var(--border-color);
+      margin: 2rem 0 2rem 0;
+    }
+
+    /* Navbar styles */
+    .navbar {
+      position: static;
+      width: 100%;
+      background: transparent;
+      padding: 10px 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-left {
+      margin-left: 56px; /* increased side margin */
+      display: flex;
+      align-items: center;
+    }
+    .nav-left .logo {
+      height: 24px; /* 1.2x of previous 20px */
+      width: auto;
+      margin-right: 16px; /* more margin */
+    }
+    .nav-right {
+      margin-right: 56px; /* increased side margin */
+      display: flex;
+      align-items: center;
+    }
+    .nav-button {
+      background: var(--primary-color);
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      padding: 7px 14px; /* 30% less than previous 10px 20px */
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.3s;
+      font-size: 0.85rem; /* reduce font size for smaller button */
+    }
+    .nav-button:hover {
+      background: var(--secondary-color);
+    }
+
+    /* Form elements */
+    .form-control, .form-select, textarea {
+      background-color: rgba(40, 48, 61, 0.7);
+      border: 1px solid var(--border-color);
+      color: var(--text-color) !important;
+    }
+    .form-control:focus, .form-select:focus, textarea:focus {
+      background-color: rgba(40, 48, 61, 0.9);
+      color: var(--text-color) !important;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 0.25rem rgba(79, 195, 247, 0.25);
+    }
+    /* Placeholder color for all input, textarea, select */
+    .form-control::placeholder,
+    .form-select::placeholder,
+    textarea::placeholder {
+      color: #cfd8dc !important;
+      opacity: 1 !important;
+    }
+    /* Input text color for all input, textarea, select */
+    .form-control,
+    .form-select,
+    textarea {
+      color: #e0e0e0 !important;
+    }
+
+    /* Buttons */
+    .btn-primary {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+    .btn-primary:hover {
+      background-color: var(--secondary-color);
+      border-color: var(--secondary-color);
+    }
+    .btn-success {
+      background-color: #2E7D32;
+      border-color: #2E7D32;
+    }
+    .btn-success:hover {
+      background-color: #1B5E20;
+      border-color: #1B5E20;
+    }
+    .btn-danger {
+      background-color: #C62828;
+      border-color: #C62828;
+    }
+    .btn-danger:hover {
+      background-color: #B71C1C;
+      border-color: #B71C1C;
+    }
+
+    /* Centered navigation links */
+    .nav-center {
+      display: flex;
+      gap: 2rem;
+    }
+    .nav-link {
+      text-decoration: none;
+      color: var(--text-color);
+      font-weight: 500;
+      font-size: 1rem;
+      padding: 0.5rem 0;
+      position: relative;
+      transition: color 0.3s ease;
+    }
+    .nav-link:hover {
+      color: var(--accent-color);
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: var(--accent-color);
+      transition: width 0.3s ease;
+    }
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
+    /* Table styles */
+    .table {
+      color: var(--text-color);
+      background-color: rgba(40, 48, 61, 0.8) !important;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .table th, .table td {
+      background-color: rgba(40, 48, 61, 0.92) !important;
+      color: #e0e0e0 !important;
+      border-color: #3a3b5a !important;
+      vertical-align: middle;
+    }
+    .table-dark {
+      --bs-table-bg: #28303d;
+      --bs-table-striped-bg: #2c3646;
+      --bs-table-hover-bg: #313d4f;
+      background-color: #28303d !important;
+      color: #4FC3F7 !important;
+    }
+    .table-dark th {
+      background-color: #23243a !important;
+      color: #4FC3F7 !important;
+      border-bottom: 2px solid #4FC3F7 !important;
+      font-weight: 700;
+    }
+    .table-hover tbody tr:hover {
+      background-color: rgba(79, 195, 247, 0.08) !important;
+    }
+
+    /* Modal styles */
+    .modal-content {
+      background: var(--glass-bg) !important;
+      border: 1px solid var(--border-color) !important;
+    }
+    .modal-header {
+      border-bottom-color: var(--border-color) !important;
+    }
+    .modal-footer {
+      border-top-color: var(--border-color) !important;
+    }
+
+    /* Add override for Edit Doctor Info Modal to make it non-transparent */
+    #editDoctorInfoModal .modal-content {
+      background: #23243a !important;
+      /* Remove glass effect */
+      backdrop-filter: none !important;
+      border: 1px solid var(--border-color) !important;
+    }
+
+    /* Add override for Edit Patient Info Modal to make it non-transparent */
+    #editPatientInfoModal .modal-content {
+      background: #23243a !important;
+      backdrop-filter: none !important;
+      border: 1px solid var(--border-color) !important;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar copied directly (not included by reference) -->
+  <nav class="navbar">
+    <div class="nav-left">
+      <img src="{{ url_for('static', filename='arogyabot_logo.svg') }}" alt="ArogyaBot Logo" class="logo" />
+    </div>
+    <div class="nav-center">
+      <a href="{{ url_for('doctor') }}" class="nav-link">Patient Dashboard</a>
+      <a href="{{ url_for('doctor_appointments') }}" class="nav-link">Appointment Requests</a>
+    </div>
+   
+    <div class="nav-right">
+      {% if current_user.is_authenticated %}
+        <button class="nav-button" style="background:#C62828;" onclick="window.location.href='{{ url_for('logout') }}'">Logout</button>
+      {% else %}
+        <button class="nav-button" onclick="window.location.href='{{ url_for('login') }}'">Login</button>
+      {% endif %}
+    </div>
+  </nav>
+  <div class="container">
+
+    <!-- ===== Doctor Panel Headline at Top ===== -->
+    <h2 style="font-size:2rem; font-weight:700; color:#4FC3F7; margin: 40px auto 18px auto; text-align:center;">
+      Doctor Panel
+    </h2>
+
+    <!-- ===== Doctor Info Top Card (Section 1) ===== -->
+    <div class="glass-card" style="margin: 0 auto 30px auto; max-width: 820px; padding: 32px 32px 28px 32px; position: relative;">
+      <div class="row align-items-center justify-content-center" style="width:100%;">
+        <!-- Profile Photo (Column 1) -->
+        <div class="col-md-3 d-flex flex-column align-items-center justify-content-center mb-3 mb-md-0">
+          <div class="profile-photo
+            {% if current_user.profile_photo and current_user.profile_photo != '' and current_user.profile_photo != None %}
+              has-photo
+            {% endif %}"
+            style="width:110px; height:110px; border-radius:50%; overflow:hidden; background:#fff; border:3px solid #4FC3F7; box-shadow:0 2px 10px rgba(0,0,0,0.1); cursor:pointer; position:relative;"
+            id="doctorProfilePhotoTrigger">
+            <img src="{% if current_user.profile_photo %}{{ url_for('static', filename=current_user.profile_photo.split('static/')[-1]) }}{% else %}{{ url_for('static', filename='default_avatar.svg') }}{% endif %}" alt="Profile Photo" style="width:100%;height:100%;object-fit:cover;">
+            <div id="doctorPhotoOverlay"
+                 style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(40,48,61,0.7); color:#fff; border-radius:50%; align-items:center; justify-content:center; font-size:1rem; font-weight:600; text-align:center; pointer-events:none; z-index:2;">
+              Change Profile Photo
+            </div>
+          </div>
+        </div>
+        <!-- Doctor Info (Column 2) -->
+        <div class="col-md-6 text-center mb-3 mb-md-0" style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
+          <!-- Remove Doctor Panel headline from here -->
+          <!-- <h2 style="font-size:2rem; font-weight:700; color:#4FC3F7; margin-bottom:0.7rem;">Doctor Panel</h2> -->
+          <div style="font-size:1.1rem; color:#E0E0E0; margin-bottom:0.2rem;">
+            <span style="font-weight:600; color:#4FC3F7;">Name:</span> {{ doctor.full_name or 'admin pannel 1' }}<br>
+            <span style="font-weight:600; color:#4FC3F7;">Clinic:</span> {{ doctor.clinic or 'Radhe Shyam' }}<br>
+            <span style="font-weight:600; color:#4FC3F7;">Address:</span> {{ doctor.address or 'pune 1' }}<br>
+            <span style="font-weight:600; color:#4FC3F7;">Specialty:</span> {{ doctor.specialty or 'heart 2' }}
+          </div>
+        </div>
+        <!-- Clinic Photo (Column 3) -->
+        <div class="col-md-3 d-flex flex-column align-items-center justify-content-center">
+          <div style="width:110px; height:110px; border-radius:18px; overflow:hidden; background:#fff; border:3px solid #4FC3F7; box-shadow:0 2px 10px rgba(0,0,0,0.1); display:flex; align-items:center; justify-content:center; cursor:pointer; position:relative;" id="clinicPhotoTrigger">
+            <img src="{% if doctor and doctor.clinic_photo %}{{ url_for('static', filename=doctor.clinic_photo.split('static/')[-1]) }}{% else %}{{ url_for('static', filename='default_avatar.svg') }}{% endif %}" alt="Clinic Photo" style="width:100%;height:100%;object-fit:cover;">
+            <div id="clinicPhotoOverlay"
+                 style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(40,48,61,0.7); color:#fff; border-radius:18px; align-items:center; justify-content:center; font-size:1rem; font-weight:600; text-align:center; pointer-events:none; z-index:2;">
+              Change Clinic Photo
+            </div>
+          </div>
+          <div style="text-align:center; color:#4FC3F7; font-size:0.98rem; margin-top:0.4rem;">Clinic Photo</div>
+        </div>
+      </div>
+      <!-- Edit Info Button at Top Right -->
+      <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editDoctorInfoModal" type="button"
+        style="position: absolute; top: 18px; right: 18px; border-radius:18px; font-weight:600; z-index:2;">
+        Edit Info
+      </button>
+    </div>
+
+    <!-- Doctor Profile Photo Modal -->
+    <div class="modal fade" id="doctorPhotoModal" tabindex="-1" aria-labelledby="doctorPhotoModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <form method="POST" action="{{ url_for('doctor_change_photo') }}" enctype="multipart/form-data">
+            <div class="modal-header">
+              <h5 class="modal-title" id="doctorPhotoModalLabel" style="font-weight:700; color:#4FC3F7;">Change Profile Photo</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1); opacity: 0.8;"></button>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+              <input type="file" class="form-control" name="upload_profile_photo" accept="image/*">
+              <div style="margin-top:12px; color:#4FC3F7; font-size:0.98rem;">Drag & Drop or select a photo from your device.</div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 24px; font-weight:500;">Cancel</button>
+              <button type="submit" class="btn btn-primary" style="border-radius: 24px; font-weight:500;">Save Photo</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Clinic Photo Modal -->
+    <div class="modal fade" id="clinicPhotoModal" tabindex="-1" aria-labelledby="clinicPhotoModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <form method="POST" action="{{ url_for('doctor_change_clinic_photo') }}" enctype="multipart/form-data">
+            <div class="modal-header">
+              <h5 class="modal-title" id="clinicPhotoModalLabel" style="font-weight:700; color:#4FC3F7;">Change Clinic Photo</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1); opacity: 0.8;"></button>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+              <input type="file" class="form-control" name="upload_clinic_photo" accept="image/*">
+              <div style="margin-top:12px; color:#4FC3F7; font-size:0.98rem;">Drag & Drop or select a photo from your device.</div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 24px; font-weight:500;">Cancel</button>
+              <button type="submit" class="btn btn-primary" style="border-radius: 24px; font-weight:500;">Save Photo</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Doctor Info Edit Modal -->
+    <div class="modal fade" id="editDoctorInfoModal" tabindex="-1" aria-labelledby="editDoctorInfoModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <form method="POST" action="{{ url_for('doctor_edit_info') }}">
+            <div class="modal-header">
+              <h5 class="modal-title" id="editDoctorInfoModalLabel" style="font-weight:700; color:#4FC3F7;">Edit Doctor Info</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1); opacity: 0.8;"></button>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+              <div class="mb-3">
+                <label class="form-label" style="color:#4FC3F7;">Full Name</label>
+                <input type="text" name="full_name" class="form-control" value="{{ doctor.full_name or '' }}" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label" style="color:#4FC3F7;">Clinic</label>
+                <input type="text" name="clinic" class="form-control" value="{{ doctor.clinic or '' }}">
+              </div>
+              <div class="mb-3">
+                <label class="form-label" style="color:#4FC3F7;">Address</label>
+                <input type="text" name="address" class="form-control" value="{{ doctor.address or '' }}">
+              </div>
+              <div class="mb-3">
+                <label class="form-label" style="color:#4FC3F7;">Specialty</label>
+                <input type="text" name="specialty" class="form-control" value="{{ doctor.specialty or '' }}">
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 24px; font-weight:500;">Cancel</button>
+              <button type="submit" class="btn btn-primary" style="border-radius: 24px; font-weight:500;">Save Changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Patient ID Search Box (Section 2) ===== -->
+    <div class="glass-card" style="max-width: 420px; margin: 0 auto 32px auto; padding: 2rem 2rem 1.5rem 2rem;">
+      <form class="d-flex flex-row align-items-center justify-content-center gap-3" method="GET" action="{{ url_for('doctor') }}">
+        <input type="text" class="form-control" name="user_id" placeholder="Enter Patient ID" style="border-radius: 18px; max-width: 220px;" required>
+        <button type="submit" class="btn btn-primary" style="border-radius: 18px; font-weight: 600;">Search</button>
+      </form>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            {% if message != 'Patient info updated successfully.' and message != 'Doctor visit record added successfully.' %}
+              <div class="alert alert-{{ category }} mt-3 mb-0">{{ message }}</div>
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+    </div>
+
+    {% with user_id = request.args.get('user_id') %}
+    {% if user %}
+    <!-- ===== Patient Details & Doctor Visit (Section 3) ===== -->
+    <section id="section2">
+      <div class="glass-card" style="max-width: 900px; margin: 0 auto 32px auto; padding: 2.5rem 2rem 2rem 2rem;">
+        <!-- Centered Headline -->
+        <h4 style="color:#4FC3F7; font-weight:700; margin-bottom:2.2rem; text-align:center;">Patient Details & Doctor Visit</h4>
+        <div class="row align-items-start mb-4">
+          <!-- Profile Photo (Column 1) -->
+          <div class="col-md-3 text-center mb-4 mb-md-0 d-flex flex-column align-items-center justify-content-center">
+            <div class="profile-photo" style="width:110px; height:110px; margin:0 auto 1rem auto;">
+              <img src="{{ user.profile_photo if user and user.profile_photo else url_for('static', filename='default_avatar.svg') }}" alt="Patient Photo" style="width:100%;height:100%;object-fit:cover;">
+            </div>
+          </div>
+          <!-- Patient Info (Column 2) -->
+          <div class="col-md-7 d-flex flex-column justify-content-center">
+            <div style="color:#4FC3F7; font-size:1.18rem; font-weight:600; margin-bottom:0.5rem;">
+              {{ user.full_name or 'RaviRaj Mane' }}
+            </div>
+            <div class="row" style="color:#E0E0E0; font-size:1.02rem; line-height:1.7;">
+              <div class="col-6">
+                <div><b style="color:#4FC3F7;">Age:</b> {{ profile.age or '25' }}</div>
+                <div><b style="color:#4FC3F7;">Height:</b> {{ profile.height or '165.0' }}</div>
+                <div><b style="color:#4FC3F7;">Weight:</b> {{ profile.weight or '57.0' }}</div>
+                <div><b style="color:#4FC3F7;">Gender:</b> {{ profile.gender or 'Male' }}</div>
+                <div><b style="color:#4FC3F7;">Blood Group:</b> {{ profile.blood_group or 'B+' }}</div>
+              </div>
+              <div class="col-6">
+                <div><b style="color:#4FC3F7;">Conditions:</b> {{ profile.chronic_conditions or 'Asthma' }}</div>
+                <div><b style="color:#4FC3F7;">Allergies:</b> {{ profile.allergies or 'Peanuts' }}</div>
+                <div><b style="color:#4FC3F7;">Current Medication:</b> {{ profile.current_medication or 'none' }}</div>
+                <div><b style="color:#4FC3F7;">Additional Notes:</b> {{ profile.notes or 'Nothing such as the issue' }}</div>
+              </div>
+            </div>
+          </div>
+          <!-- Edit Info Button (Column 3) -->
+          <div class="col-md-2 d-flex align-items-start justify-content-end">
+            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editPatientInfoModal" type="button" style="border-radius:18px; font-weight:600; margin-top:2px;">
+              Edit Info
+            </button>
+          </div>
+        </div>
+        <!-- Separator line between patient info and doctor input -->
+        <hr style="border-top: 2px solid #b9e9ff; opacity:0.25; margin: 1.5rem 0 2rem 0;">
+        <!-- Doctor Visit Form (single row, all fields in one line) -->
+        <form method="POST" action="{{ url_for('doctor', user_id=user.id) }}" class="row g-3">
+          <input type="hidden" name="form_type" value="doctor_visit">
+          <div class="col-md-3">
+            <label class="form-label" style="color:#4FC3F7;">Disease</label>
+            <input type="text" name="disease" class="form-control" placeholder="Disease" required>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label" style="color:#4FC3F7;">Blood Report</label>
+            <input type="text" name="blood_report" class="form-control" placeholder="Blood Report">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label" style="color:#4FC3F7;">Suggested Medicine</label>
+            <input type="text" name="suggested_medicine" class="form-control" placeholder="Suggested Medicine">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label" style="color:#4FC3F7;">Notes</label>
+            <input type="text" name="notes" class="form-control" placeholder="Notes">
+          </div>
+          <input type="hidden" name="user_id" value="{{ user.id }}">
+          <div class="col-12 mt-3 text-center">
+            <button type="submit" class="btn btn-success" style="border-radius:18px; font-weight:600;">Add Doctor Visit</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ===== Edit Patient Info Modal ===== -->
+    <div class="modal fade" id="editPatientInfoModal" tabindex="-1" aria-labelledby="editPatientInfoModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <form method="POST" action="{{ url_for('doctor', user_id=user.id) }}">
+            <input type="hidden" name="form_type" value="edit_patient_info">
+            <div class="modal-header">
+              <h5 class="modal-title" id="editPatientInfoModalLabel" style="font-weight:700; color:#4FC3F7;">Edit Patient Info</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1); opacity: 0.8;"></button>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+              <div class="mb-3">
+                <label class="form-label" style="color:#4FC3F7;">Age</label>
+                <input type="number" name="age" class="form-control" value="{{ profile.age if profile else '' }}">
+              </div>
+              <div class="mb-3">
+                <label class="form-label" style="color:#4FC3F7;">Height</label>
+                <input type="number" step="0.1" name="height" class="form-control" value="{{ profile.height if profile else '' }}">
+              </div>
+              <div class="mb-3">
+                <label class="form-label" style="color:#4FC3F7;">Weight</label>
+                <input type="number" step="0.1" name="weight" class="form-control" value="{{ profile.weight if profile else '' }}">
+              </div>
+              <div class="mb-3">
+                <label class="form-label" style="color:#4FC3F7;">Gender</label>
+                <select name="gender" class="form-select">
+                  <option value="">Select</option>
+                  <option {% if profile.gender == 'Male' %}selected{% endif %}>Male</option>
+                  <option {% if profile.gender == 'Female' %}selected{% endif %}>Female</option>
+                  <option {% if profile.gender == 'Other' %}selected{% endif %}>Other</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label class="form-label" style="color:#4FC3F7;">Blood Group</label>
+                <input type="text" name="blood_group" class="form-control" value="{{ profile.blood_group if profile else '' }}">
+              </div>
+              <div class="mb-3">
+                <label class="form-label" style="color:#4FC3F7;">Conditions</label>
+                <textarea name="chronic_conditions" class="form-control" rows="2">{{ profile.chronic_conditions if profile else '' }}</textarea>
+              </div>
+              <div class="mb-3">
+                <label class="form-label" style="color:#4FC3F7;">Allergies</label>
+                <textarea name="allergies" class="form-control" rows="2">{{ profile.allergies if profile else '' }}</textarea>
+              </div>
+              <div class="mb-3">
+                <label class="form-label" style="color:#4FC3F7;">Current Medication</label>
+                <input type="text" name="current_medication" class="form-control" value="{{ profile.current_medication if profile else '' }}">
+              </div>
+              <div class="mb-3">
+                <label class="form-label" style="color:#4FC3F7;">Additional Notes</label>
+                <textarea name="notes" class="form-control" rows="2">{{ profile.notes if profile else '' }}</textarea>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 24px; font-weight:500;">Cancel</button>
+              <button type="submit" class="btn btn-primary" style="border-radius: 24px; font-weight:500;">Save Changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Previous Doctor Visits (Section 4) ===== -->
+    <section id="section3">
+      <div class="glass-card" style="max-width: 1400px; margin: 0 auto 32px auto; padding: 2.5rem 2rem 2rem 2rem;">
+        <h4 style="color:#4FC3F7; font-weight:700; margin-bottom:1.5rem;">Previous Doctor Visits</h4>
+        {% set visits = (user.doctor_visits|sort(attribute='appointment_datetime', reverse=True)) if user and user.doctor_visits else [] %}
+        {% if visits|length > 0 %}
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+              <tr>
+                <th>Appointment Date</th>
+                <th>Disease</th>
+                <th>Notes</th>
+                <th>Doctor Name</th>
+                <th>Status</th>
+                <th style="width: 15%;">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for visit in visits %}
+                {% set doc = visit.doctor or None %}
+                <tr>
+                  <td>{{ visit.appointment_datetime.strftime('%d %b %Y, %I:%M %p') if visit.appointment_datetime else 'N/A' }}</td>
+                  <td>{{ visit.disease or '' }}</td>
+                  <td>{{ visit.notes or '' }}</td>
+                  <td>{{ doc.full_name if doc else visit.doctor_id }}</td>
+                  <td>
+                    {% if visit.status == 'pending' %}
+                      <span class="badge bg-warning text-dark">Pending</span>
+                    {% elif visit.status == 'confirmed' %}
+                      <span class="badge bg-success">Confirmed</span>
+                    {% elif visit.status == 'rejected' %}
+                      <span class="badge bg-danger">Rejected</span>
+                    {% else %}
+                      <span class="badge bg-secondary">{{ visit.status }}</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if visit.status == 'pending' and str(visit.doctor_id) == str(current_user.id) %}
+                      <div class="d-flex gap-2">
+                        <form method="POST" action="{{ url_for('confirm_appointment', id=visit.id, user_id=user.id) }}" class="mb-0">
+                          <button type="submit" class="btn btn-sm btn-success">Confirm</button>
+                        </form>
+                        <form method="POST" action="{{ url_for('reject_appointment', id=visit.id, user_id=user.id) }}" class="mb-0">
+                          <button type="submit" class="btn btn-sm btn-danger">Reject</button>
+                        </form>
+                      </div>
+                    {% elif visit.status == 'confirmed' and visit.doctor_id == current_user.id %}
+
+                      <form method="POST" action="{{ url_for('reject_appointment', id=visit.id, user_id=user.id) }}" class="mb-0">
+                        <button type="submit" class="btn btn-sm btn-warning text-dark">Cancel</button>
+                      </form>
+                    {% else %}
+                      <span class="text-muted">—</span>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+          <div class="alert alert-info mt-3">No previous doctor visits found for this patient.</div>
+        {% endif %}
+      </div>
+    </section>
+
+    <!-- ===== Diagnosis History (Section 5) ===== -->
+    <section id="section4">
+      <div class="glass-card" style="max-width: 1400px; margin: 0 auto 32px auto; padding: 2.5rem 2rem 2rem 2rem;">
+        <h4 style="color:#4FC3F7; font-weight:700; margin-bottom:1.5rem;">Diagnosis History</h4>
+        {% if diagnosis_records and diagnosis_records|length > 0 %}
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+              <tr>
+                <th>Diagnosed At</th>
+                <th>Symptoms</th>
+                <th>Predicted Disease</th>
+                <th>Severity</th>
+                <th>Suggested Diet</th>
+                <th>Suggested Exercise</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for record in diagnosis_records %}
+              <tr id="row-{{ record.id }}">
+                <td>{{ record.diagnosed_at.strftime('%Y-%m-%d %H:%M') if record.diagnosed_at else '' }}</td>
+                <td>{{ record.symptoms }}</td>
+                <td>{{ record.predicted_disease or '' }}</td>
+                <td>{{ record.severity or '' }}</td>
+                <td>{{ record.diet_plan or '' }}</td>
+                <td>{{ record.exercise_plan or '' }}</td>
+                <td>
+                  <button class="btn btn-danger btn-sm" onclick="deleteDiagnosis('{{ record.id }}')">Delete</button>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+          <div class="alert alert-info mt-3">No diagnosis history found for this patient.</div>
+        {% endif %}
+      </div>
+    </section>
+    {% elif request.args.get('user_id') %}
+      <div class="alert alert-danger mt-4">No user found with Patient ID "{{ request.args.get('user_id') }}".</div>
+    {% endif %}
+    {% endwith %}
+    <script>
+      // Doctor profile photo popup
+      document.addEventListener('DOMContentLoaded', function() {
+        var trigger = document.getElementById('doctorProfilePhotoTrigger');
+        var overlay = document.getElementById('doctorPhotoOverlay');
+        if (trigger && overlay) {
+          trigger.addEventListener('mouseenter', function() {
+            overlay.style.display = 'flex';
+            overlay.style.alignItems = 'center';
+            overlay.style.justifyContent = 'center';
+          });
+          trigger.addEventListener('mouseleave', function() {
+            overlay.style.display = 'none';
+          });
+          trigger.addEventListener('click', function() {
+            var modal = new bootstrap.Modal(document.getElementById('doctorPhotoModal'));
+            modal.show();
+          });
+        }
+        // Clinic photo popup
+        var clinicTrigger = document.getElementById('clinicPhotoTrigger');
+        var clinicOverlay = document.getElementById('clinicPhotoOverlay');
+        if (clinicTrigger && clinicOverlay) {
+          clinicTrigger.addEventListener('mouseenter', function() {
+            clinicOverlay.style.display = 'flex';
+            clinicOverlay.style.alignItems = 'center';
+            clinicOverlay.style.justifyContent = 'center';
+          });
+          clinicTrigger.addEventListener('mouseleave', function() {
+            clinicOverlay.style.display = 'none';
+          });
+          clinicTrigger.addEventListener('click', function() {
+            var modal = new bootstrap.Modal(document.getElementById('clinicPhotoModal'));
+            modal.show();
+          });
+        }
+      });
+      function deleteDiagnosis(recordId) {
+    fetch('{{ url_for("delete_diagnosis_record") }}', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': '{{ csrf_token() if csrf_token is defined else "" }}'
+      },
+      body: JSON.stringify({ id: recordId })
+    })
+    .then(response => {
+      if (response.ok) {
+        document.getElementById('row-' + recordId).remove();
+      } else {
+        alert('Failed to delete record.');
+      }
+    });
+  }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </div>
+</body>
+</html>

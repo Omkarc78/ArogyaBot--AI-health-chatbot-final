@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Update User Profile</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: #f7f8fa !important;
+      color: #23243a !important;
+    }
+    .edit-btn-top {
+      position: absolute;
+      top: 18px;
+      right: 24px;
+      z-index: 10;
+    }
+    .edit-container {
+      position: relative;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 6px 32px rgba(0,0,0,0.10);
+      padding: 2.5rem 2rem 2rem 2rem;
+      margin-bottom: 2.5rem;
+      min-height: 320px;
+      color: #23243a;
+      border: 1.5px solid #e7eaf3;
+    }
+    .edit-form-fields[hidden] {
+      display: none !important;
+    }
+    .form-label {
+      font-weight: 600;
+      color: #3a3b5a !important;
+      letter-spacing: 0.01em;
+      margin-bottom: 0.25em;
+    }
+    .form-control, .form-select, textarea {
+      color: #23243a !important;
+      background: #f7f8fa !important;
+      border: 1.5px solid #d6d8e7;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      margin-bottom: 1.1em;
+      font-size: 1.01em;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-control:focus, .form-select:focus, textarea:focus {
+      border-color: #7565FF;
+      box-shadow: 0 4px 18px #7565ff22;
+      background: #f3f4fa !important;
+      color: #23243a !important;
+    }
+    .edit-form-fields .col-md-6 > div {
+      background: #f9fafd;
+      border-radius: 14px;
+      padding: 1.5rem 1.2rem 1.2rem 1.2rem;
+      border: 1.5px solid #e7eaf3;
+      margin-bottom: 1.2rem;
+      box-shadow: 0 2px 12px #0001;
+    }
+    .form-control-plaintext {
+      color: #3a3b5a !important;
+      background: transparent !important;
+      font-weight: 500;
+      padding-left: 0.2em;
+    }
+    .table, .table th, .table td {
+      background: #fff !important;
+      color: #23243a !important;
+    }
+    .table-dark th {
+      background: #f3f4fa !important;
+      color: #23243a !important;
+      font-weight: 700;
+      border-bottom: 2px solid #e7eaf3 !important;
+    }
+    .btn-primary {
+      background: #7565FF !important;
+      border: none;
+      color: #fff !important;
+      font-weight: 600;
+      border-radius: 8px;
+    }
+    .btn-primary:hover {
+      background: #5a4dde !important;
+      color: #fff !important;
+    }
+    .btn-success {
+      background: #4bb543 !important;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+    }
+    .btn-success:hover {
+      background: #388e3c !important;
+    }
+    .btn-secondary {
+      background: #e7eaf3 !important;
+      border: none;
+      color: #23243a !important;
+      border-radius: 8px;
+      font-weight: 600;
+    }
+    .btn-secondary:hover {
+      background: #d6d8e7 !important;
+      color: #23243a !important;
+    }
+    .edit-container h2 {
+      color: #23243a;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+      margin-bottom: 2.2rem;
+      text-shadow: 0 2px 12px #e7eaf355;
+      font-size: 2.1rem;
+      border-bottom: 2px solid #e7eaf3;
+      padding-bottom: 0.7rem;
+      margin-top: 0.2rem;
+    }
+    .edit-container label {
+      margin-top: 0.7em;
+    }
+    .edit-container .form-control, .edit-container .form-select, .edit-container textarea {
+      margin-bottom: 1em;
+    }
+    .edit-container .form-label.fw-bold {
+      color: #23243a !important;
+    }
+    .edit-container .form-control-plaintext {
+      color: #3a3b5a !important;
+      background: transparent !important;
+      font-weight: 500;
+    }
+    .table-bordered {
+      border-color: #e7eaf3 !important;
+    }
+    .table-hover tbody tr:hover {
+      background: #f3f4fa !important;
+    }
+    .section-heading {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #7565FF;
+      margin-bottom: 1.2rem;
+      margin-top: 0.5rem;
+      letter-spacing: 0.01em;
+    }
+    .info-box {
+      background: #f9fafd;
+      border: 1.5px solid #e7eaf3;
+      border-radius: 14px;
+      padding: 1.2rem 1.2rem 1rem 1.2rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 12px #0001;
+    }
+    .info-box label.form-label.fw-bold {
+      font-size: 1.rem;
+      color: #7565FF !important;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      margin-bottom: 0.32em;
+    }
+  </style>
+</head>
+<body>
+  <div class="container mt-5">
+    <div class="edit-container">
+      <h2>Update Profile for {{ user.full_name }} ({{ user.username }})</h2>
+      <div class="section-heading">User Information</div>
+      <button class="btn btn-primary btn-sm edit-btn-top" id="editBtn" onclick="enableEdit()" type="button">Edit</button>
+      <form method="POST" id="editForm" action="{{ url_for('admin_update', user_id=user.id) }}">
+        <div class="row edit-form-fields" id="editFields" hidden>
+          <div class="col-md-6">
+            <div class="info-box">
+              <label class="form-label fw-bold">Age</label>
+              <input type="number" name="age" class="form-control mb-3" value="{{ profile.age or '' }}">
+
+              <label class="form-label fw-bold">Gender</label>
+              <select name="gender" class="form-select mb-3">
+                <option value="">Select</option>
+                <option {% if profile.gender == 'Male' %}selected{% endif %}>Male</option>
+                <option {% if profile.gender == 'Female' %}selected{% endif %}>Female</option>
+                <option {% if profile.gender == 'Other' %}selected{% endif %}>Other</option>
+              </select>
+
+              <label class="form-label fw-bold">Height (cm)</label>
+              <input type="number" step="0.1" name="height" class="form-control mb-3" value="{{ profile.height or '' }}">
+
+              <label class="form-label fw-bold">Weight (kg)</label>
+              <input type="number" step="0.1" name="weight" class="form-control mb-3" value="{{ profile.weight or '' }}">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="info-box">
+              <label class="form-label fw-bold">Blood Group</label>
+              <input type="text" name="blood_group" class="form-control mb-3" value="{{ profile.blood_group or '' }}">
+
+              <label class="form-label fw-bold">Chronic Conditions</label>
+              <textarea name="chronic_conditions" class="form-control mb-3" rows="2">{{ profile.chronic_conditions or '' }}</textarea>
+
+              <label class="form-label fw-bold">Allergies</label>
+              <textarea name="allergies" class="form-control mb-3" rows="2">{{ profile.allergies or '' }}</textarea>
+
+              <label class="form-label fw-bold">Current Medication</label>
+              <input type="text" name="current_medication" class="form-control mb-3" value="{{ profile.current_medication or '' }}">
+
+              <label class="form-label fw-bold">Additional Notes</label>
+              <textarea name="notes" class="form-control mb-3" rows="2">{{ profile.notes or '' }}</textarea>
+            </div>
+          </div>
+        </div>
+        <div class="row" id="readonlyFields">
+          <div class="col-md-6">
+            <div class="info-box">
+              <label class="form-label fw-bold">Age</label>
+              <div class="form-control-plaintext">{{ profile.age or '' }}</div>
+
+              <label class="form-label fw-bold">Gender</label>
+              <div class="form-control-plaintext">{{ profile.gender or '' }}</div>
+
+              <label class="form-label fw-bold">Height (cm)</label>
+              <div class="form-control-plaintext">{{ profile.height or '' }}</div>
+
+              <label class="form-label fw-bold">Weight (kg)</label>
+              <div class="form-control-plaintext">{{ profile.weight or '' }}</div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="info-box">
+              <label class="form-label fw-bold">Blood Group</label>
+              <div class="form-control-plaintext">{{ profile.blood_group or '' }}</div>
+
+              <label class="form-label fw-bold">Chronic Conditions</label>
+              <div class="form-control-plaintext">{{ profile.chronic_conditions or '' }}</div>
+
+              <label class="form-label fw-bold">Allergies</label>
+              <div class="form-control-plaintext">{{ profile.allergies or '' }}</div>
+
+              <label class="form-label fw-bold">Current Medication</label>
+              <div class="form-control-plaintext">{{ profile.current_medication or '' }}</div>
+
+              <label class="form-label fw-bold">Additional Notes</label>
+              <div class="form-control-plaintext">{{ profile.notes or '' }}</div>
+            </div>
+          </div>
+        </div>
+        <div class="mt-3" id="editActions" hidden>
+          <button type="submit" class="btn btn-success">Save Changes</button>
+          <button type="button" class="btn btn-secondary ms-2" onclick="cancelEdit()">Cancel</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="section-heading">Diagnosis History</div>
+    <table class="table table-bordered table-hover bg-white">
+      <thead class="table-dark">
+        <tr>
+          <th>Diagnosed At</th>
+          <th>Symptoms</th>
+          <th>Predicted Disease</th>
+          <th>Severity</th>
+          <th>Suggested Diet</th>
+          <th>Suggested Exercise</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for record in diagnosis_records %}
+        <tr id="row-{{ record.id }}">
+          <td>{{ record.diagnosed_at.strftime('%Y-%m-%d %H:%M') if record.diagnosed_at else '' }}</td>
+          <td>{{ record.symptoms }}</td>
+          <td>{{ record.predicted_disease or '' }}</td>
+          <td>{{ record.severity or '' }}</td>
+          <td>{{ record.diet_plan or '' }}</td>
+          <td>{{ record.exercise_plan or '' }}</td>
+          <td>
+            <button class="btn btn-danger btn-sm" onclick="deleteDiagnosis('{{ record.id }}')">Delete</button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary mt-3 ms-2">Back to Dashboard</a>
+  </div>
+  <script>
+    function enableEdit() {
+      document.getElementById('editFields').hidden = false;
+      document.getElementById('editActions').hidden = false;
+      document.getElementById('readonlyFields').style.display = 'none';
+      document.getElementById('editBtn').style.display = 'none';
+    }
+
+    function cancelEdit() {
+      document.getElementById('editFields').hidden = true;
+      document.getElementById('editActions').hidden = true;
+      document.getElementById('readonlyFields').style.display = '';
+      document.getElementById('editBtn').style.display = '';
+    }
+
+    function deleteDiagnosis(recordId) {
+      fetch('{{ url_for("delete_diagnosis_record") }}', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token() if csrf_token is defined else "" }}'
+        },
+        body: JSON.stringify({ id: recordId })
+      })
+      .then(response => {
+        if (response.ok) {
+          document.getElementById('row-' + recordId).remove();
+        } else {
+          alert('Failed to delete record.');
+        }
+      });
+    }
+  </script>
+</body>
+</html>

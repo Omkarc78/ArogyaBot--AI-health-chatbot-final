@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Diagnose</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: #28303d !important;
+      color: #e5daeb !important;
+    }
+
+    .diagnose-section {
+      margin-top: 110px !important;
+      color: #e5daeb;
+    }
+
+    @media (max-width: 900px) {
+      .diagnose-section {
+        margin-top: 140px !important;
+      }
+    }
+
+    .container,
+    .form-label,
+    .form-control,
+    .form-select,
+    .table,
+    .table th,
+    .table td,
+    h2,
+    h4,
+    h5,
+    label {
+      color: #e5daeb !important;
+      background: transparent !important;
+    }
+
+    .form-control,
+    .form-select,
+    textarea {
+      background: rgba(35, 36, 58, 0.35) !important;
+      color: #e5daeb !important;
+      border: 1px solid #7565FF;
+      backdrop-filter: blur(7px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.10);
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+
+    .form-control:focus,
+    .form-select:focus,
+    textarea:focus {
+      background: rgba(35, 36, 58, 0.55) !important;
+      color: #e5daeb !important;
+      border-color: #a89cf3;
+      box-shadow: 0 6px 24px rgba(117, 101, 255, 0.12);
+      backdrop-filter: blur(10px);
+    }
+
+    .btn-primary {
+      background: #7565FF !important;
+      border: none;
+      color: #e5daeb !important;
+    }
+
+    .btn-primary:hover {
+      background: #5a4dde !important;
+      color: #fff !important;
+    }
+
+    .table {
+      background: #23243a !important;
+      color: #e5daeb !important;
+    }
+
+    .table-dark th {
+      background: #3a3b5a !important;
+      color: #e5daeb !important;
+    }
+
+    .rounded,
+    .alert,
+    .p-4 {
+      background: rgba(35, 36, 58, 0.35) !important;
+      color: #e5daeb !important;
+      border-color: #3a3b5a !important;
+      border-radius: 18px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+      backdrop-filter: blur(8px);
+    }
+
+    .alert {
+      border-radius: 10px;
+    }
+
+    .diagnose-container {
+      display: flex;
+      flex-direction: column;
+      gap: 2.5rem;
+      align-items: center;
+    }
+
+    .floating-png {
+      animation: floatY 4s ease-in-out infinite;
+      will-change: transform;
+    }
+
+    @keyframes floatY {
+      0% {
+        transform: translateY(0px);
+      }
+
+      50% {
+        transform: translateY(-10px);
+      }
+
+      100% {
+        transform: translateY(0px);
+      }
+    }
+
+    .severity-img {
+      width: auto;
+      height: auto;
+      max-width: 170px;
+      max-height: 210px;
+      background-color: transparent;
+      object-fit: contain;
+      filter: brightness(0.5) grayscale(0.3);
+      opacity: 0.7;
+      border-radius: 16px;
+      transition:
+        filter 0.3s cubic-bezier(.4, 2, .6, 1),
+        transform 0.3s cubic-bezier(.4, 2, .6, 1),
+        box-shadow 0.3s cubic-bezier(.4, 2, .6, 1),
+        opacity 0.3s;
+      box-shadow: none;
+      cursor: pointer;
+    }
+
+    .severity-img:hover,
+    .severity-img.active {
+      filter: brightness(1.08) grayscale(0);
+      opacity: 1;
+      transform: scale(1.22);
+      box-shadow: 0 0 32px 0 #fff8, 0 0 32px 8px #fff4;
+      z-index: 2;
+    }
+
+    .severity-label-low {
+      color: #b8d9a0;
+      text-shadow: 0 2px 12px #b8d9a055;
+    }
+
+    .severity-label-moderate {
+      color: #f2e3a0;
+      text-shadow: 0 2px 12px #f2e3a055;
+    }
+
+    .severity-label-high {
+      color: #f4b183;
+      text-shadow: 0 2px 12px #f4b18355;
+    }
+
+    .severity-label-extreme {
+      color: #e68582;
+      text-shadow: 0 2px 12px #e6858255;
+    }
+
+    .section-header {
+      background: #2e304d;
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .section-body {
+      background: #202232;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      display: none;
+    }
+
+    .toggle-btn {
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+    .bot-msg {
+      animation: fadeInUp 0.4s ease;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+
+<body>
+  <!-- Navbar section -->
+  <section id="section0" style="position:relative; z-index:100;">
+    {% include 'navbar.html' %}
+  </section>
+
+  <section class="diagnose-section">
+    <div class="container diagnose-container">
+      <!-- Diagnose form below image -->
+      <div class="diagnose-form-container">
+        <!-- Diagnose heading image with floating animation -->
+        <img src="/static/DIGNOSE.png" alt="Diagnose" id="diagnose-heading-img" class="floating-png" style="
+            width: 800px;
+            max-width: 100%;
+            display: block;
+            margin: -3rem auto 4rem auto;
+            opacity: 1;
+            border-radius: 0;
+            background: transparent;
+          ">
+        <form method="POST" autocomplete="off" id="diagnose-form">
+          <div class="mb-3">
+            <!-- Custom Symptom Input with Autocomplete -->
+            <label for="symptom-input" class="form-label w-100 text-center"
+              style="font-weight:600; display:block; text-align:center;">
+              Enter Your Symptoms
+            </label>
+            <div id="symptom-input-container" style="display: flex;
+flex-wrap: wrap;
+align-items: center;
+gap: 0.5em;
+padding: 0.5em 0.8em;
+min-height: 42px;
+background-color: rgba(115, 122, 156, 0.08);
+border: 1px solid rgba(115, 122, 156, 0.3);
+border-radius: 1.1rem;
+box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+transition: box-shadow 0.3s ease;
+font-size: 14px;">
+              <!-- Selected symptoms will be rendered here -->
+              <input type="text" id="symptom-input" class="form-control" placeholder="Type a symptom..."
+                autocomplete="off"
+                style="background:transparent !important; border:none; box-shadow:none; color:#7e65f7; min-width:120px; max-width:220px; flex:1 0 120px; outline:none;"
+                onfocus="this.style.color='#e5daeb';" />
+              <style>
+                #symptom-input::placeholder {
+                  color: #e2d6ff !important;
+                  opacity: 1;
+                  font-weight: 300;
+                  letter-spacing: 0.01em;
+                  font-size: 0.9rem;
+                  position: relative;
+                  top: -3px;
+                }
+              </style>
+            </div>
+            <div id="autocomplete-list" class="list-group"
+              style="position:absolute; width:100%; max-height:220px; overflow-y:auto; z-index:1000;"></div>
+            <!-- Hidden fields for submission -->
+            <input type="hidden" name="symptoms" id="symptoms-hidden" />
+            <input type="hidden" name="de_symptoms" id="de-symptoms-hidden" />
+          </div>
+          <div style="text-align:center;">
+            <button type="submit" name="submit" value="save" class="btn btn-primary" style="
+                padding: 0.4rem 1.2rem;
+                font-size: 1rem;
+                margin: 0 auto;
+                display: inline-block;
+                border-radius: 40px;
+              ">
+              Diagnose
+            </button>
+          </div>
+          {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+          <div
+            style="margin-top:1.2em; text-align:center; background:transparent; border:none; box-shadow:none; padding:0;">
+            {% for category, message in messages %}
+            {% if message == "Diagnosis completed successfully!" %}
+            <div class="alert alert-success"
+              style="background:transparent !important; color:#b8d9a0; border:none; font-weight:600; font-size:1.08rem; text-align:center; box-shadow:none; margin:0 auto; display:inline-block;">
+              {{ message }}
+            </div>
+            {% endif %}
+            {% endfor %}
+          </div>
+          {% endif %}
+          {% endwith %}
+        </form>
+      </div>
+
+      <!-- Prediction Summary (Section 1) -->
+      {% if show_extra_fields %}
+      <div class="mt-4 p-4"
+        style="background:#28303d !important; box-shadow:none !important; border:none !important; color:#e5daeb; border-radius:18px !important;">
+        <div class="mb-3 text-center">
+          <span style="
+            display: inline-block;
+            margin-bottom: 1rem;
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #f2e3a0, #e36f9c, #7e65f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
+          ">
+            Analysis Result
+          </span>
+          {% if predicted_disease %}
+          <p>
+            Based on the symptoms you entered, it appears you may have
+            <strong style="color:#f2e3a0;">{{ predicted_disease }}</strong>.
+          </p>
+          {% else %}
+          <p>No disease could be predicted at this time. Please review your symptoms.</p>
+          {% endif %}
+        </div>
+
+        <!-- Severity Images Row -->
+        <div id="severity-row"
+          style="display: flex; justify-content: center; align-items: flex-end; gap: 6rem; margin: 6rem 0 1.2rem 0; background: transparent;">
+          <img src="/static/1.png" alt="Low" class="severity-img" id="severity-img-1">
+          <img src="/static/2.png" alt="Moderate" class="severity-img" id="severity-img-2">
+          <img src="/static/3.png" alt="High" class="severity-img" id="severity-img-3">
+          <img src="/static/4.png" alt="Extreme" class="severity-img" id="severity-img-4">
+        </div>
+        <div id="severity-label" class="text-center"
+          style="margin-top: 2.2rem; margin-bottom: 1.2rem; font-size: 1.5rem; font-weight: 700; letter-spacing: 0.03em; padding-top: 1.2rem;">
+          <!-- Severity label will be set by JS -->
+        </div>
+
+        {% if disease_details and disease_details.description %}
+        <div class="mb-2 text-center" style="padding: 0.7rem 0;">
+          <span style="display:block; font-size:1.18rem; font-weight:700; color:#f2e3a0; margin-bottom:0.8rem;">
+            -: Disease Description :-
+          </span>
+          <span style="display:block;">{{ disease_details.description }}</span>
+        </div>
+        {% endif %}
+
+        <!-- Section 3: Recommendations -->
+        <div class="mt-4 p-4"
+          style="background:#28303d !important; box-shadow:none !important; border:none !important; color:#e5daeb; border-radius:18px !important; display:flex; align-items:flex-start; gap:8rem; margin-top:6rem; padding-top:6rem;">
+          <div style="flex:1;">
+            <span style="
+              display: inline-block;
+              margin-top: 5rem;
+              margin-bottom: 1rem;
+              font-size: 2rem;
+              font-weight: 600;
+              background: linear-gradient(90deg, #f2e3a0, #e36f9c, #7e65f7);
+              -webkit-background-clip: text;
+              -webkit-text-fill-color: transparent;
+              background-clip: text;
+              color: transparent;
+            ">
+              Recommendations
+            </span>
+            {% if disease_details %}
+            {% if disease_details.diet %}
+            <div style="margin-bottom:0.5rem;">
+              <strong>Recommended Diet:</strong> {{ disease_details.diet }}
+            </div>
+            {% endif %}
+            {% if disease_details.exercise %}
+            <div style="margin-bottom:0.5rem;">
+              <strong>Recommended Exercise:</strong> {{ disease_details.exercise }}
+            </div>
+            {% endif %}
+            {% if disease_details.medicine %}
+            <div style="margin-bottom:0.5rem;">
+              <strong>Recommended Medicine:</strong> {{ disease_details.medicine }}
+            </div>
+            {% endif %}
+            {% if disease_details.tips %}
+            <div>
+              <strong>Tips:</strong>
+              <ul style="margin:0.3rem 0 0 0; color:#fffbe7;">
+                {% for tip in disease_details.tips %}
+                <li>{{ tip }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+            {% endif %}
+            {% if disease_details.precautions %}
+            <div>
+              <strong>Precautions:</strong>
+              <ul style="margin:0.3rem 0 0 0; color:#fffbe7;">
+                {% for precaution in disease_details.precautions %}
+                <li>{{ precaution }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+            {% endif %}
+            {% else %}
+            <div>No recommendations available for this disease.</div>
+            {% endif %}
+          </div>
+          <div id="lottie-recommendation"
+            style="width:320px; height:320px; min-width:120px; margin-top:calc(5rem - 80px); margin-left:2rem; transform: scale(1.8);">
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- LottieFiles CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Initialize Lottie animation
+      lottie.loadAnimation({
+        container: document.getElementById('lottie-recommendation'),
+        renderer: 'svg',
+        loop: true,
+        autoplay: true,
+        path: '/static/recomendation.json'
+      });
+
+      // Severity highlight logic
+      function highlightSeverity() {
+        // Get severity from Flask template
+        var rawSeverity = "{{ severity }}";
+        console.log("[DEBUG] Raw severity value:", rawSeverity);
+
+        // Normalize the severity value
+        var riskLevel = (rawSeverity || "low").toString().trim();
+        riskLevel = riskLevel.charAt(0).toUpperCase() + riskLevel.slice(1).toLowerCase();
+        console.log("[DEBUG] Normalized severity:", riskLevel);
+
+        // Mapping of severity levels to image IDs
+        var severityMap = {
+          "Low": 1,
+          "Moderate": 2,
+          "High": 3,
+          "Extreme": 4
+        };
+
+        // Color classes for labels
+        var colorClassMap = {
+          "Low": "severity-label-low",
+          "Moderate": "severity-label-moderate",
+          "High": "severity-label-high",
+          "Extreme": "severity-label-extreme"
+        };
+
+        // Get the index for the severity level
+        var idx = severityMap[riskLevel] || 1;
+        console.log("[DEBUG] Severity index:", idx);
+
+        // Highlight the correct image
+        var severityRow = document.getElementById('severity-row');
+        if (severityRow) {
+          for (var i = 1; i <= 4; i++) {
+            var img = document.getElementById('severity-img-' + i);
+            if (img) {
+              img.classList.remove('active');
+              if (i === idx) {
+                img.classList.add('active');
+                console.log("[DEBUG] Activated image:", img.id);
+              }
+            }
+          }
+
+          // Set severity label
+          var labelDiv = document.getElementById('severity-label');
+          if (labelDiv) {
+            labelDiv.textContent = "Severity: " + riskLevel;
+            labelDiv.className = "text-center " + (colorClassMap[riskLevel] || colorClassMap["Low"]);
+            console.log("[DEBUG] Set label to:", riskLevel);
+          }
+        }
+      }
+
+      // Run severity highlighting
+      highlightSeverity();
+
+      // Symptom input functionality
+      let symptomAliases = {};
+      let selectedKeys = [];
+      let selectedValues = [];
+      let allKeys = [];
+
+      // Load JSON aliases
+      fetch("/static/data/symptom_aliases.json")
+        .then(resp => resp.json())
+        .then(data => {
+          symptomAliases = data;
+          allKeys = Object.keys(symptomAliases);
+        });
+
+      function getSuggestions(input) {
+        if (!input) return [];
+        const lower = input.toLowerCase();
+        return allKeys.filter(k => k.toLowerCase().includes(lower) && !selectedKeys.includes(k));
+      }
+
+      function renderSelected() {
+        const container = document.getElementById('symptom-input-container');
+        Array.from(container.querySelectorAll('.symptom-tag')).forEach(tag => tag.remove());
+
+        const input = document.getElementById('symptom-input');
+        selectedKeys.forEach((key, idx) => {
+          const tag = document.createElement('span');
+          tag.className = 'symptom-tag badge rounded-pill';
+          tag.style = `
+          background: #444654;
+          color: #e5daeb;
+          font-size: 0.85rem;
+          padding: 0.18em 0.7em 0.18em 0.7em;
+          margin-right: 0.18em;
+          margin-bottom: 0.18em;
+          display: inline-flex;
+          align-items: center;
+          min-height: 1.3em;
+          font-weight: 400;
+          letter-spacing: 0.01em;
+          box-shadow: 0 1px 4px #0001;
+          border: 1px solid #35364a;
+        `;
+          tag.textContent = key;
+
+          const removeBtn = document.createElement('button');
+          removeBtn.type = 'button';
+          removeBtn.className = 'btn-close btn-close-white ms-2';
+          removeBtn.style = 'font-size:0.75em; margin-left:0.3em; opacity:0.6; filter:invert(1);';
+          removeBtn.onclick = () => {
+            selectedKeys.splice(idx, 1);
+            selectedValues.splice(idx, 1);
+            renderSelected();
+          };
+          tag.appendChild(removeBtn);
+          container.insertBefore(tag, input);
+        });
+
+        document.getElementById('symptoms-hidden').value = selectedKeys.join(',');
+        document.getElementById('de-symptoms-hidden').value = selectedValues.join(',');
+      }
+
+      // Autocomplete logic
+      const input = document.getElementById('symptom-input');
+      const list = document.getElementById('autocomplete-list');
+
+      input.addEventListener('input', function () {
+        const val = this.value.trim();
+        list.innerHTML = '';
+        if (!val) {
+          list.style.display = 'none';
+          return;
+        }
+
+        const suggestions = getSuggestions(val);
+        suggestions.slice(0, 8).forEach(s => {
+          const item = document.createElement('div');
+          item.className = 'list-group-item list-group-item-action';
+          item.style = `
+          cursor: pointer;
+          background: #23243a;
+          color: #e5daeb;
+          border: none;
+          border-radius: 7px;
+          margin: 2px 0;
+          font-size: 0.93rem;
+          padding: 0.28em 0.8em;
+          transition: background 0.18s;
+          box-shadow: 0 2px 8px #0002;
+        `;
+          item.onmouseover = () => { item.style.background = "#3a3b5a"; };
+          item.onmouseout = () => { item.style.background = "#23243a"; };
+          item.textContent = s;
+          item.onclick = () => {
+            if (!selectedKeys.includes(s)) {
+              selectedKeys.push(s);
+              selectedValues.push(symptomAliases[s]);
+              renderSelected();
+            }
+            input.value = '';
+            list.innerHTML = '';
+            list.style.display = 'none';
+            input.focus();
+          };
+          list.appendChild(item);
+        });
+
+        list.style.display = suggestions.length > 0 ? 'block' : 'none';
+        list.style.background = "#23243a";
+        list.style.border = "1px solid #35364a";
+        list.style.borderRadius = "8px";
+        list.style.boxShadow = "0 6px 24px #0005";
+        list.style.padding = "0.1em 0";
+        list.style.maxWidth = "340px";
+        list.style.minWidth = "140px";
+        list.style.position = "absolute";
+        list.style.zIndex = "1000";
+
+        const rect = input.getBoundingClientRect();
+        list.style.top = (input.offsetTop + input.offsetHeight + 6) + "px";
+        list.style.left = input.offsetLeft + "px";
+      });
+
+      input.addEventListener('blur', () => setTimeout(() => { list.innerHTML = ''; list.style.display = 'none'; }, 150));
+
+      input.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          const val = this.value.trim();
+          const suggestions = getSuggestions(val);
+          if (suggestions.length > 0) {
+            const s = suggestions[0];
+            if (!selectedKeys.includes(s)) {
+              selectedKeys.push(s);
+              selectedValues.push(symptomAliases[s]);
+              renderSelected();
+            }
+            input.value = '';
+            list.innerHTML = '';
+            list.style.display = 'none';
+          }
+        }
+
+        if (e.key === 'Backspace' && this.value === '') {
+          if (selectedKeys.length > 0) {
+            selectedKeys.pop();
+            selectedValues.pop();
+            renderSelected();
+          }
+        }
+      });
+
+      document.getElementById('diagnose-form').addEventListener('submit', function (e) {
+        if (selectedKeys.length === 0) {
+          e.preventDefault();
+          alert("Please select at least one symptom from the suggestions.");
+        }
+      });
+
+      // Initial render
+      renderSelected();
+    });
+  </script>
+
+  <!-- Floating Chatbot Button -->
+  <div id="chatbot-btn" style="
+         position: fixed; 
+         bottom: 30px; 
+         right: 30px; 
+         background: linear-gradient(135deg, #6a5af9, #8a79ff);
+         width: 65px; 
+         height: 65px; 
+         border-radius: 50%; 
+         display: flex;
+         justify-content: center; 
+         align-items: center;
+         font-size: 30px; 
+         color: white; 
+         cursor: pointer;
+         box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+         transition: transform .25s;
+         z-index: 999;
+       ">
+    💬
+  </div>
+
+  <!-- Chat Popup -->
+  <div id="chat-popup" style="
+         position: fixed;
+         bottom: 110px;
+         right: 30px;
+         width: 380px;
+         height: 520px;
+         background: #1f2033;
+         border: 1px solid #6f64ff;
+         border-radius: 15px;
+         display: none;
+         flex-direction: column;
+         box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+         animation: fadeIn .3s;
+         z-index: 999;
+       ">
+
+    <!-- Header -->
+    <div style="
+         padding: 14px; 
+         text-align: center; 
+         background: linear-gradient(135deg, #6a5af9, #8a79ff); 
+         color: white; 
+         font-size: 17px; 
+         font-weight: bold;
+         border-radius: 15px 15px 0 0;">
+      AI Health Assistant
+      <span id="chat-close" style="float:right; cursor:pointer;">✖</span>
+    </div>
+
+    <!-- Chat Area -->
+    <div id="chat-area" style="flex:1; overflow-y:auto; padding:12px; color:#fff; font-size:14px;">
+
+      <div style="margin:10px 0; color:#9fa3ff;">
+        👋 <b>Welcome!</b><br>
+        Please describe your symptoms like this:<br><br>
+        <div style="background:#2b2d45; padding:10px; border-radius:10px;">
+          <i>“I am Ruhani, 45, Female, with fever, headache, nausea.”</i>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Typing indicator -->
+    <div id="typing-indicator" style="display:none; margin:10px; color:#bbb; font-style:italic;">
+      Bot is typing<span id="dots">.</span>
+    </div>
+
+    <!-- Input -->
+    <div style="padding:10px; display:flex; gap:8px;">
+      <input id="chat-input" type="text" placeholder='Type here... Example: "I am Raj, 45, Female, with fever"' style="
+               flex:1;
+               padding:10px; 
+               border-radius:10px; 
+               border:1px solid #6f64ff; 
+               background:#2e304d; 
+               color:white;">
+
+      <button id="send-btn" style="
+                background:#6f64ff; 
+                border:none; 
+                color:white; 
+                padding:10px 15px;
+                border-radius:10px;
+                cursor:pointer;">
+        ➤
+      </button>
+    </div>
+  </div>
+
+
+  <style>
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+
+
+  <script>
+    // Icons mapping
+    const MEDICAL_ICONS = {
+      "Patient Summary": "🩺",
+      "Symptom Clusters": "🧬",
+      "Primary Symptoms": "🤒",
+      "Severity Assessment": "⚠️",
+      "Differential Diagnosis": "🧠",
+      "Symptom Analysis": "🔍",
+      "Risk Factors": "📌",
+      "Recommendations": "💊",
+      "Treatment Plan": "📝"
+    };
+
+    let dotsInterval;
+    function showTyping() {
+      const indicator = document.getElementById("typing-indicator");
+      const dots = document.getElementById("dots");
+      indicator.style.display = "block";
+      let dotCount = 1;
+
+      dotsInterval = setInterval(() => {
+        dotCount = (dotCount % 3) + 1;
+        dots.innerHTML = ".".repeat(dotCount);
+      }, 300);
+    }
+
+    function hideTyping() {
+      const indicator = document.getElementById("typing-indicator");
+      indicator.style.display = "none";
+      clearInterval(dotsInterval);
+    }
+
+    function formatBotText(text) {
+      // Use marked to convert markdown-like text to HTML
+      let html = marked.parse(text || "");
+
+      // Inject icons and collapsible section wrappers for known headings
+      Object.keys(MEDICAL_ICONS).forEach(section => {
+        const icon = MEDICAL_ICONS[section];
+        const sectionRegex = new RegExp(section, "gi");
+        html = html.replace(
+          sectionRegex,
+          `\n<div class="section-header">${icon} <b>${section}</b><span class="toggle-btn">▼</span></div>\n<div class="section-body">`
+        );
+      });
+
+      // Close paragraph tags into section bodies
+      html = html.replace(/<br>/g, "");
+      html = html.replace(/<\/p>/g, "</p></div>");
+
+      return html;
+    }
+
+    function activateCollapse() {
+      document.querySelectorAll(".section-header").forEach(header => {
+        header.onclick = () => {
+          const body = header.nextElementSibling;
+          const btn = header.querySelector(".toggle-btn");
+
+          if (body.style.display === "none" || body.style.display === "") {
+            body.style.display = "block";
+            btn.innerHTML = "▲";
+          } else {
+            body.style.display = "none";
+            btn.innerHTML = "▼";
+          }
+        };
+      });
+    }
+
+    function addMessage(sender, text, isHtml = false) {
+      const area = document.getElementById('chat-area');
+      const div = document.createElement('div');
+
+      div.style.margin = "10px 0";
+      div.style.padding = "12px";
+      div.style.borderRadius = "12px";
+      div.style.lineHeight = "1.5";
+
+      if (sender === "You") {
+        div.style.background = "#6f64ff";
+        div.style.marginLeft = "40px";
+      } else {
+        div.style.background = "#2b2d45";
+        div.style.marginRight = "40px";
+      }
+
+      div.innerHTML = isHtml ? text : `<b>${sender}:</b> ${text}`;
+      area.appendChild(div);
+      area.scrollTop = area.scrollHeight;
+    }
+
+    function typeBotMessage(html) {
+      const area = document.getElementById("chat-area");
+      const bubble = document.createElement("div");
+
+      bubble.className = "bot-msg";
+      bubble.style.background = "#2b2d45";
+      bubble.style.padding = "12px";
+      bubble.style.borderRadius = "12px";
+      bubble.style.margin = "10px 40px 10px 0";
+      bubble.style.lineHeight = "1.4";
+
+      bubble.innerHTML = "";
+
+      area.appendChild(bubble);
+
+      let i = 0;
+      // The typewriter effect was buggy with HTML tags.
+      // This is a simpler and more robust way to display the message.
+      bubble.innerHTML = html;
+      area.scrollTop = area.scrollHeight;
+      activateCollapse();
+    }
+
+    function showDoctorRecommendations(doctors) {
+      if (!doctors || doctors.length === 0) return;
+
+      const area = document.getElementById('chat-area');
+      const recommendationsContainer = document.createElement('div');
+
+      recommendationsContainer.className = 'bot-msg';
+      recommendationsContainer.style.background = 'transparent';
+      recommendationsContainer.style.padding = '0';
+      recommendationsContainer.style.marginRight = '0';
+
+      let html = `
+        <div style="padding-left: 12px; margin-bottom: 8px;">
+            <b>👨‍⚕️ Recommended Doctors</b>
+        </div>
+        <div class="container-fluid px-0">
+            <div class="row row-cols-1 g-2">
+      `;
+
+      doctors.forEach(d => {
+        html += `
+            <div class="col">
+                <div class="card shadow-sm" style="background:#2b2d45; border:1px solid #444654; border-radius:10px;">
+                    <div class="card-body" style="padding: 12px;">
+                        <h6 class="card-title" style="margin-bottom: 2px; font-size: 15px; color: #fff;">${d.name}</h6>
+                        <p class="card-text text-muted" style="font-size: 13px; color: #9fa3ff !important; margin-bottom: 8px;">${d.specialty}</p>
+                        <a href="/book-appointment/${d.id}" class="btn btn-sm btn-primary">Book Appointment</a>
+                    </div>
+                </div>
+            </div>
+        `;
+      });
+
+      html += `</div></div>`;
+      recommendationsContainer.innerHTML = html;
+      area.appendChild(recommendationsContainer);
+      area.scrollTop = area.scrollHeight;
+    }
+
+
+    document.getElementById('chatbot-btn').onclick = () => {
+      document.getElementById('chat-popup').style.display = 'flex';
+      document.getElementById('chat-input').focus();
+    };
+
+    document.getElementById('chat-close').onclick = () => {
+      document.getElementById('chat-popup').style.display = 'none';
+    };
+
+    document.getElementById('send-btn').onclick = sendMessage;
+    document.getElementById('chat-input').addEventListener("keypress", e => {
+      if (e.key === "Enter") sendMessage();
+    });
+
+    function sendMessage() {
+      const input = document.getElementById('chat-input');
+      const msg = input.value.trim();
+      if (!msg) return;
+
+      addMessage("You", msg);
+      input.value = "";
+
+      showTyping();
+
+      fetch("/chatbot_api", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ message: msg })
+})
+.then(async res => {
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(text || "Server error");
+  }
+  return res.json();
+})
+.then(data => {
+  hideTyping();
+
+  if (!data.reply) {
+    typeBotMessage("<i>No response from AI.</i>");
+    return;
+  }
+
+  const formatted = formatBotText(data.reply);
+  typeBotMessage(formatted);
+
+  if (data.doctors && data.doctors.length > 0) {
+    showDoctorRecommendations(data.doctors);
+  }
+})
+.catch(err => {
+  hideTyping();
+  console.error("Chatbot API Error:", err);
+  addMessage("Bot", "⚠️ AI service is currently unavailable.");
+});
+
+    }
+  </script>
+
+  {% include 'footer.html' %}
+</body>
+
+</html>

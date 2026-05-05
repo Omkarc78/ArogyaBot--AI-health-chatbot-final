@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About | ArogyaBot</title>
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body, html {
+      width: 100%;
+      height: 100%;
+      font-family: 'Raleway', sans-serif;
+      color: #FCEEFF;
+      background: url('static/background.png') no-repeat center center fixed;
+      background-size: cover;
+      overflow-x: hidden;
+    }
+
+    .overlay {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(41, 49, 62, 0.6);
+      z-index: -1;
+    }
+
+    .container {
+      padding: 7rem 5% 4rem; /* Top padding accounts for navbar */
+      max-width: 1200px;
+      margin: auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      background: linear-gradient(to right, #f2e3a0, #ffabff, #7565FF);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1rem;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 500;
+      margin-bottom: 2rem;
+      color: rgba(252, 238, 255, 0.9);
+    }
+
+    .text-content p {
+      font-size: 1rem;
+      line-height: 1.8;
+      margin-bottom: 1.2rem;
+      color: rgba(252, 238, 255, 0.85);
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.8rem;
+      margin-top: 3rem;
+    }
+
+    .feature {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(252, 238, 255, 0.2);
+      border-radius: 16px;
+      padding: 1.8rem 1.5rem;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 20px rgba(117, 101, 255, 0.15);
+    }
+
+    .feature:hover {
+      transform: translateY(-8px);
+      background: rgba(117, 101, 255, 0.15);
+    }
+
+    .feature .icon {
+      font-size: 2rem;
+      margin-bottom: 0.6rem;
+      color: #f2e3a0;
+    }
+
+    .feature h3 {
+      font-size: 1.15rem;
+      margin-bottom: 0.5rem;
+      color: #FCEEFF;
+    }
+
+    .feature p {
+      font-size: 0.95rem;
+      color: rgba(252, 238, 255, 0.75);
+    }
+
+    .floating-blob {
+      position: absolute;
+      width: 160px;
+      height: 160px;
+      background: radial-gradient(circle at center, rgba(117, 101, 255, 0.3), transparent);
+      border-radius: 50%;
+      filter: blur(40px);
+      animation: floatBlob 8s ease-in-out infinite alternate;
+      z-index: -1;
+    }
+
+    .blob1 {
+      top: 10%;
+      left: 5%;
+    }
+
+    .blob2 {
+      bottom: 15%;
+      right: 10%;
+    }
+
+    @keyframes floatBlob {
+      0% { transform: translateY(0px) scale(1); }
+      100% { transform: translateY(-20px) scale(1.05); }
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2.2rem;
+      }
+
+      h2 {
+        font-size: 1.2rem;
+      }
+
+      .container {
+        padding: 6rem 1.5rem 3rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay"></div>
+
+  <!-- Floating Blobs -->
+  <div class="floating-blob blob1"></div>
+  <div class="floating-blob blob2"></div>
+
+  <!-- Navbar Include -->
+  <section id="section0" style="position:relative; z-index:100;">
+    {% include 'navbar.html' %}
+  </section>
+
+  <main class="container">
+    <h1>About ArogyaBot</h1>
+    <h2>Empowering Health Decisions with Intelligence and Care</h2>
+
+    <section class="text-content">
+      <p><strong>ArogyaBot</strong> bridges cutting-edge AI with compassionate healthcare. We believe early awareness is the foundation of better outcomes, and we help people understand symptoms in real-time—with personalized insights and peace of mind.</p>
+
+      <p>Our system, <strong>NutriScan AI</strong>, interacts with users just like a smart assistant. It evaluates current symptoms, understands historical medical data, and suggests possible causes—all while prioritizing privacy and empathy.</p>
+
+      <p>ArogyaBot isn’t just technology—it’s your intelligent health companion, built for clarity, safety, and confidence in every step of your wellness journey.</p>
+    </section>
+
+    <section class="features">
+      <div class="feature">
+        <div class="icon">🧠</div>
+        <h3>ML-Powered Analysis</h3>
+        <p>Smart symptom assessment tailored to your health profile.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">🔒</div>
+        <h3>Secure & Private</h3>
+        <p>End-to-end encryption and trusted data security practices.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">💡</div>
+        <h3>Early Insights</h3>
+        <p>Gain potential health indicators before conditions escalate.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">❤️</div>
+        <h3>Human-Centered</h3>
+        <p>Empathetic design focused on clarity and personal care.</p>
+      </div>
+    </section>
+  </main>
+  {% include 'footer.html' %}
+</body>
+</html>

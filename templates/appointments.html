@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Appointments</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body {
+      background: #1f2033;
+      color: #fff;
+    }
+    .table {
+      --bs-table-bg: #2b2d45;
+      --bs-table-border-color: #6f64ff;
+      --bs-table-color: #fff;
+      --bs-table-hover-bg: #3c3e5e;
+    }
+    .table-light {
+      --bs-table-bg: #6f64ff;
+      --bs-table-color: #fff;
+      --bs-table-border-color: #6f64ff;
+    }
+    .btn-primary {
+      background: #6f64ff;
+      border: none;
+    }
+  </style>
+</head>
+
+<body style="background:#1f2033; color:#fff;">
+
+{% include 'navbar.html' %}
+
+<div class="container mt-5 pt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3>📅 My Appointments</h3>
+    <a href="{{ url_for('upload') }}" class="btn btn-primary">
+      <i class="bi bi-plus-lg"></i> New Diagnosis
+    </a>
+  </div>
+
+  {% if appointments %}
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>Doctor</th>
+            <th>Disease / Reason</th>
+            <th>Date & Time</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for a in appointments %}
+          <tr>
+            <td>
+              <b>{{ a.doctor.full_name if a.doctor else 'N/A' }}</b><br>
+              <small class="text-white-50">{{ a.doctor.specialty if a.doctor else 'N/A' }}</small>
+            </td>
+            <td>{{ a.disease }}</td>
+            <td>{{ a.appointment_datetime.strftime('%d %b %Y, %I:%M %p') if a.appointment_datetime else 'N/A' }}</td>
+            <td>
+              {% if a.status == 'pending' %}
+                <span class="badge bg-warning text-dark">Pending</span>
+              {% elif a.status == 'confirmed' %}
+                <span class="badge bg-success">Confirmed</span>
+              {% elif a.status == 'rejected' %}
+                <span class="badge bg-danger">Rejected</span>
+              {% else %}
+                <span class="badge bg-secondary">{{ a.status }}</span>
+              {% endif %}
+            </td>
+            <td>
+              <a href="{{ url_for('book_appointment', doctor_id=a.doctor_id) }}"
+                 class="btn btn-sm btn-outline-light">
+                Book Again
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="alert alert-info text-center"
+         style="background:#2b2d45; border:none; color:#fff;">
+      No appointments booked yet.
+    </div>
+  {% endif %}
+</div>
+
+{% include 'footer.html' %}
+</body>
+</html>
